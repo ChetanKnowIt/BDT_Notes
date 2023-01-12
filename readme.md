@@ -1,15 +1,12 @@
 # BDT NOTES
-------------
 
 This repository for all big data related content I will be studying. 
 
-- [Day 2](#heading)
-- [Day 3](#heading-1)
 
-## Day Wise
-------------
+## Table of Contents:
 
-> Table of Contents
+- [Day 2](#day-2)
+- [Day 3](#day-3)
 
 <!-- toc -->
 
@@ -25,7 +22,7 @@ This repository for all big data related content I will be studying.
  - Linux namespaces and linux commands
 
 
-## * Day 3
+## Day 3
  - unix history
  - IBM big data metrics
  - throughput
