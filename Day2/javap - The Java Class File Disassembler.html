@@ -1,0 +1,244 @@
+<!--?xml version="1.0" encoding="utf-8"?-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" class=" regenabled  gecko radius jsenabled regloaded" lang="en-US"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta name="generator" content="HTML Tidy for Windows (vers 12 April 2005), see www.w3.org">
+<title>javap - The Java Class File Disassembler</title>
+<meta name="collection" content="reference">
+
+<script language="javascript1.2" type="text/javascript" src="javap%20-%20The%20Java%20Class%20File%20Disassembler_files/popUp.js"></script>
+<script language="javascript1.2" type="text/javascript" src="javap%20-%20The%20Java%20Class%20File%20Disassembler_files/sniff.js"></script>
+<script language="javascript1.2" type="text/javascript" src="javap%20-%20The%20Java%20Class%20File%20Disassembler_files/menucontent.js"></script>
+<script language="javascript1.2" type="text/javascript" src="javap%20-%20The%20Java%20Class%20File%20Disassembler_files/menucode.js"></script>
+<script language="javascript1.2" type="text/javascript" src="javap%20-%20The%20Java%20Class%20File%20Disassembler_files/developer.js"></script>
+<script language="javascript1.2" type="text/javascript" src="javap%20-%20The%20Java%20Class%20File%20Disassembler_files/search.js"></script>
+<link rel="stylesheet" href="javap%20-%20The%20Java%20Class%20File%20Disassembler_files/default_developer.css">
+<meta name="collection" content="reference"> 
+<script>bazadebezolkohpepadr="613088945"</script><script type="text/javascript" src="javap%20-%20The%20Java%20Class%20File%20Disassembler_files/248affc9.js" defer="defer"></script></head>
+<body>
+<noscript>JavaScript is not supported by your browser. JavaScript
+support is required for full functionality of this page.</noscript>
+<div class="a0 a0v1" id="a0v1"><!-- BEGIN A1 COMPONENT V.0 -->
+<div class="a1 a1r2">
+<div class="a1v0"><a href="#skip2content" class="skiplink">Skip to
+Content</a></div>
+</div>
+<!-- END A1 COMPONENT V.0 -->
+<!-- BEGIN A2 COMPONENT V.1 -->
+<div class="a2w0">
+<div class="a2" id="a2v1">
+<div class="a2w1">
+<div class="a2w2">
+<div class="a2w3">
+<div class="a2w4">
+<div class="a2topiclinks"><a href="http://www.oracle.com/" title="Oracle Home Page" id="sunlogo" name="sunlogo"><img src="javap%20-%20The%20Java%20Class%20File%20Disassembler_files/a.gif" alt="Home Page" width="98" height="58" border="0"></a>
+<ul id="mtopics">
+<li id="mtopic1" class=" a2nomenu"><a id="glink1" class="tpclink a2menu" title="See Oracle Technology Network" href="http://oracle.com/technology" name="glink1">Oracle Technology Network</a></li>
+<li id="mtopic2" class=" a2nomenu"><a id="glink2" class="tpclink a2menu" title="Software Downloads" href="http://www.oracle.com/technology/software/index.html" name="glink2">Software Downloads</a></li>
+<li id="mtopic3" class=" a2nomenu"><a id="glink3" class="tpclink a2menu" title="See Java SE Documentation" href="http://download.oracle.com/javase/index.html" name="glink3">Documentation</a></li>
+</ul>
+<div class="a2search"><a href="https://docs.oracle.com/javase/search.html" target="_blank">Search</a></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- END A2 COMPONENT V.1 -->
+<!-- BEGIN SEPARATOR -->
+<div class="hr">
+<hr></div>
+<!-- END SEPARATOR -->
+<!-- ============ -->
+<!-- MAIN CONTENT -->
+<!-- ============ -->
+<a name="skip2content" id="skip2content"></a>
+
+
+<div class="smallpagetitle"><h1>javap - The Java Class File Disassembler</h1></div>
+<p>Disassembles class files.</p>
+
+<h2>SYNOPSIS</h2>
+
+<pre class="codeblock">javap [ <a href="https://docs.oracle.com/javase/7/docs/technotes/tools/windows/javap.html#options">options</a> ] classes
+</pre>
+
+<h2>DESCRIPTION</h2>
+
+<p>The <b>javap</b> command disassembles one or more class files. Its output
+depends on the options used. If no options are used, <b>javap</b>
+prints out the package, protected, and public fields and methods of
+the classes passed to it. <b>javap</b> prints its output to stdout.</p>
+
+<dl>
+<dt><a href="#options"><code>options</code></a></dt>
+<dd>Command-line options.</dd>
+<dt><code>classes</code></dt>
+<dd>List of one or more classes (separated by spaces) to be processed for annotations (such as <code>DocFooter.class</code>). You may specify a class that can be found in the class path, by its file name (for example, <code>C:\myproject\src\DocFooter.class</code>), or with a URL (for example, <code>file:///C:/myproject/src/DocFooter.class</code>).</dd>
+</dl>
+
+<p>For example, compile the following class declaration:</p>
+<pre class="codeblock">import java.awt.*;
+import java.applet.*;
+
+public class DocFooter extends Applet {
+        String date;
+        String email;
+
+        public void init() {
+                resize(500,100);
+                date = getParameter("LAST_UPDATED");
+                email = getParameter("EMAIL");
+        }
+
+        public void paint(Graphics g) {
+                g.drawString(date + " by ",100, 15);
+                g.drawString(email,290,15);
+        }
+}
+</pre>
+<p>The output from <b>javap DocFooter.class</b> yields:</p>
+<pre class="codeblock">Compiled from "DocFooter.java"
+public class DocFooter extends java.applet.Applet {
+  java.lang.String date;
+  java.lang.String email;
+  public DocFooter();
+  public void init();
+  public void paint(java.awt.Graphics);
+}
+</pre>
+<p>The output from <b>javap -c DocFooter.class</b> yields:</p>
+<pre class="codeblock">Compiled from "DocFooter.java"
+public class DocFooter extends java.applet.Applet {
+  java.lang.String date;
+
+  java.lang.String email;
+
+  public DocFooter();
+    Code:
+       0: aload_0       
+       1: invokespecial #1                  // Method java/applet/Applet."&lt;init&gt;":()V
+       4: return        
+
+  public void init();
+    Code:
+       0: aload_0       
+       1: sipush        500
+       4: bipush        100
+       6: invokevirtual #2                  // Method resize:(II)V
+       9: aload_0       
+      10: aload_0       
+      11: ldc           #3                  // String LAST_UPDATED
+      13: invokevirtual #4                  // Method getParameter:(Ljava/lang/String;)Ljava/lang/String;
+      16: putfield      #5                  // Field date:Ljava/lang/String;
+      19: aload_0       
+      20: aload_0       
+      21: ldc           #6                  // String EMAIL
+      23: invokevirtual #4                  // Method getParameter:(Ljava/lang/String;)Ljava/lang/String;
+      26: putfield      #7                  // Field email:Ljava/lang/String;
+      29: return        
+
+  public void paint(java.awt.Graphics);
+    Code:
+       0: aload_1       
+       1: new           #8                  // class java/lang/StringBuilder
+       4: dup           
+       5: invokespecial #9                  // Method java/lang/StringBuilder."&lt;init&gt;":()V
+       8: aload_0       
+       9: getfield      #5                  // Field date:Ljava/lang/String;
+      12: invokevirtual #10                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+      15: ldc           #11                 // String  by 
+      17: invokevirtual #10                 // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+      20: invokevirtual #12                 // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+      23: bipush        100
+      25: bipush        15
+      27: invokevirtual #13                 // Method java/awt/Graphics.drawString:(Ljava/lang/String;II)V
+      30: aload_1       
+      31: aload_0       
+      32: getfield      #7                  // Field email:Ljava/lang/String;
+      35: sipush        290
+      38: bipush        15
+      40: invokevirtual #13                 // Method java/awt/Graphics.drawString:(Ljava/lang/String;II)V
+      43: return        
+}
+</pre>
+<h2><a name="options" id="options"></a>OPTIONS</h2>
+<dl>
+<dt><b>-help<br>--help<br>-?</b></dt>
+<dd>Prints out help message for <b>javap</b>.</dd>
+<dt><b>-l</b></dt>
+<dd>Prints out line and local variable tables.</dd>
+<dt><b>-public</b></dt>
+<dd>Shows only public classes and members.</dd>
+<dt><b>-protected</b></dt>
+<dd>Shows only protected and public classes and members.</dd>
+<dt><b>-package</b></dt>
+<dd>Shows only package, protected, and public classes and members.
+This is the default.</dd>
+<dt><b>-private<br>-p</b></dt>
+<dd>Shows all classes and members.</dd>
+<dt><b>-J<i>flag</i></b></dt>
+<dd>Pass <i>flag</i> directly to the runtime system. Some examples:
+<pre class="codeblock">javap -J-version
+javap -J-Djava.security.manager -J-Djava.security.policy=MyPolicy MyClassName
+</pre></dd>
+<dt><b>-s</b></dt>
+<dd>Prints internal type signatures.</dd>
+<dt><b>-sysinfo</b></dt>
+<dd>Shows system information (path, size, date, MD5 hash) of the class being processed.</dd>
+<dt><b>-constants</b></dt>
+<dd>Shows static final constants.</dd>
+<dt><b>-c</b></dt>
+<dd>Prints out disassembled code, i.e., the instructions that
+comprise the Java bytecodes, for each of the methods in the class.
+These are documented in the <a href="http://docs.oracle.com/javase/specs/">Java Virtual Machine
+Specification</a>.</dd>
+<dt><b>-verbose</b></dt>
+<dd>Prints stack size, number of <code>locals</code> and
+<code>args</code> for methods.</dd>
+<dt><b>-classpath <i>path</i></b></dt>
+<dd>Specifies the path <b>javap</b> uses to look up classes.
+Overrides the default or the CLASSPATH environment variable if it
+is set.</dd>
+<dt><b>-bootclasspath <i>path</i></b></dt>
+<dd>Specifies path from which to load bootstrap classes. By
+default, the bootstrap classes are the classes implementing the
+core Java platform located in <tt>jre\lib\rt.jar</tt> and several
+other jar files.</dd>
+<dt><b>-extdirs <i>dirs</i></b></dt>
+<dd>Overrides location at which installed extensions are searched
+for. The default location for extensions is the value of
+<tt>java.ext.dirs</tt>.</dd>
+</dl>
+<h2>SEE ALSO</h2>
+<p><a href="https://docs.oracle.com/javase/7/docs/technotes/tools/windows/javac.html">javac</a>, <a href="https://docs.oracle.com/javase/7/docs/technotes/tools/windows/java.html">java</a>,
+<a href="https://docs.oracle.com/javase/7/docs/technotes/tools/windows/jdb.html">jdb</a>, <a href="https://docs.oracle.com/javase/7/docs/technotes/tools/windows/javah.html">javah</a></p>
+
+<div id="javasefooter">
+<div class="hr">
+<hr></div>
+<div id="javasecopyright">
+<a href="https://docs.oracle.com/javase/7/docs/legal/cpyr.html">Copyright ©</a> 1993, 2020, Oracle
+and/or its affiliates. All rights reserved.
+</div>
+
+<div id="javasecontactus">
+<a href="http://docs.oracle.com/javase/feedback.html">Contact Us</a>
+</div>
+</div>
+</div>
+
+<!-- Start SiteCatalyst code   -->
+<script language="JavaScript" type="text/javascript" src="http://www.oracle.com/ocom/groups/systemobject/@mktg_admin/documents/systemobject/s_code_download.js"></script>
+<script language="JavaScript" type="text/javascript" src="http://www.oracle.com/ocom/groups/systemobject/@mktg_admin/documents/systemobject/s_code.js"></script>
+ 
+<!-- ********** DO NOT ALTER ANYTHING BELOW THIS LINE ! *********** -->
+<!--  Below code will send the info to Omniture server -->
+<script language="javascript" type="text/javascript">var s_code=s.t();if(s_code)document.write(s_code)</script>
+ 
+<!-- End SiteCatalyst code -->
+
+<noscript><img src="https://docs.oracle.com/akam/13/pixel_248affc9?a=dD0zMjhjODY4MDM2Y2I4ZDc4MzQ2ZGRkZGYwOTRiYmUzYzZmNjcwOWQzJmpzPW9mZg==" style="visibility: hidden; position: absolute; left: -999px; top: -999px;" /></noscript>
+
+</body></html>

@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What are you doing?</title>
+<style>
+h1 {vertical-align: top; text-align: center; margin:0; padding:0; font-family: Arial;}
+</style>
+<script src="scripts/jquery-1.4.4.min.js"></script>
+<script>
+fontsize = function () {
+  var fontSize = $("body").width() * 0.4 + "px";
+  $("h1").css('font-size', fontSize);
+};
+$(window).resize(fontsize);
+$(document).ready(fontsize);
+</script>
+</head>
+<body>
+<h1>404</h1>
+</body>
+</html>

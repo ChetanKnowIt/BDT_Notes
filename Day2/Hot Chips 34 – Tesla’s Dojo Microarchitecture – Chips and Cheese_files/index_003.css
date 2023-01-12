@@ -1,0 +1,130 @@
+h1, h2, h3, h4, label, .entry-title, .widget-title, .site-title, .site-description {
+	font-family: "PT Serif", "Droid Serif", "Liberation Serif", "Constantia", "Times New Roman", sans-serif;
+}
+
+body, p, ul, li {
+	font-family: "Roboto Slab", "Source Serif Pro", "Droid Serif", "Liberation Serif", "Constantia", "Times New Roman", sans-serif;
+}
+
+.main-navigation a {
+	padding: 1rem .75rem;
+}
+
+.page-title-container .page-header h1, .page-title-container .page-header .page-title {
+	padding: 2% 1rem;
+}
+
+.wp-block-column:not(:first-child) {
+  margin-left: 0;
+}
+
+.wp-block-columns {
+  display: block;
+}
+
+.site-title-wrapper {
+	padding-top: 2%;
+	padding-bottom: 2%;
+}
+
+.wpnbha h2.article-section-title {
+	font-size: 3em !important;
+}
+
+.page-title-container .page-header h1{
+	padding-bottom: 1% !important;
+	padding-top: 1% !important;
+}
+
+amp-next-page{
+	 display: none !important;
+}
+
+.site-header, .site-title-wrapper {
+	height: 130px;
+}
+
+
+.site-title-wrapper {
+	font-size: 16px;
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: column;
+	justify-content: center;
+	align-content: start;
+}
+
+.site-title-wrapper > * {
+	margin-right: 1em;
+	text-shadow: 0 2px 4px black;
+	transition: opacity .1s ease-out;
+}
+
+.custom-logo-link {
+	display: flex;
+	height: 6rem;
+}
+
+.custom-logo, .custom-logo-link {
+	width: 5em;
+	object-fit: contain;
+}
+
+.menu-toggle {
+	padding: 22px 5px!important;
+	margin-top: 20px;
+}
+
+.hentry, .widget {
+	padding: 1em 2em;
+	border-radius: 16px;
+}
+
+.jetpack_widget_social_icons ul {
+	margin-bottom: 0;
+}
+
+h2.article-section-title {
+	line-height: .7em;
+}
+
+.wpnbha:not(:first-child) {
+	margin-top: 3em;
+}
+
+h2.article-section-title > span {
+	font-size: .75em!important;
+}
+
+
+.wpnbha.image-alignbehind .post-has-image {
+	border-radius: 6px;
+	overflow: hidden;
+}
+
+.wpnbha.image-alignbehind .post-has-image .entry-wrapper {
+	padding: 1.5em!important;
+	text-shadow: 0px 2px 4px black;
+	backdrop-filter: blur(4px);
+}
+
+/*#secondary {
+	width: 16.55% !important;
+}
+	
+#primary {
+	width: 77.88%
+}
+*/
+
+@media (max-width: 960px) {
+	.site-title-wrapper {
+		font-size: calc(1vw/2 + 11.2px);
+	}
+}
+
+@media (max-width: 384px) {
+	.site-description, .site-title {
+		opacity: 0;
+	}
+}

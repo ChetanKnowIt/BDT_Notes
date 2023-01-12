@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>Digging into Linux namespaces - part 1</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Fred Raynal">
+
+
+    <!-- Le styles -->
+    <link rel="stylesheet" href="Digging%20into%20Linux%20namespaces%20-%20part%201_files/bootstrap.min.css" type="text/css">
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+      .sidebar-nav {
+        padding: 9px 0;
+      }
+      .tag-1 {
+        font-size: 13pt;
+      }
+      .tag-2 {
+        font-size: 10pt;
+      }
+      .tag-2 {
+        font-size: 8pt;
+      }
+      .tag-4 {
+        font-size: 6pt;
+      }
+    </style>
+    <link href="Digging%20into%20Linux%20namespaces%20-%20part%201_files/bootstrap-responsive.min.css" rel="stylesheet">
+    <link href="Digging%20into%20Linux%20namespaces%20-%20part%201_files/font-awesome.css" rel="stylesheet">
+
+    <link href="Digging%20into%20Linux%20namespaces%20-%20part%201_files/pygments.css" rel="stylesheet">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+    <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="https://blog.quarkslab.com/theme/img/favicon.ico">
+    <link rel="apple-touch-icon" href="https://blog.quarkslab.com/theme/img/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="https://blog.quarkslab.com/theme/img/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="https://blog.quarkslab.com/theme/img/apple-touch-icon-114x114.png">
+
+    <link href="https://blog.quarkslab.com/" type="application/atom+xml" rel="alternate" title="Quarkslab's blog ATOM Feed">
+
+  <script type="text/javascript" async="" src="Digging%20into%20Linux%20namespaces%20-%20part%201_files/embed.js"></script><script async="" type="text/javascript" src="Digging%20into%20Linux%20namespaces%20-%20part%201_files/count.js"></script><link rel="prefetch" as="style" href="Digging%20into%20Linux%20namespaces%20-%20part%201_files/a_data_002/lounge.973e8258c48717b79b37fecbf85dcea2.css"><link rel="prefetch" as="script" href="Digging%20into%20Linux%20namespaces%20-%20part%201_files/a_data_002/common.bundle.78f08d08ee97a04dc049cbcf3a5ec827.js"><link rel="prefetch" as="script" href="Digging%20into%20Linux%20namespaces%20-%20part%201_files/a_data_002/lounge.bundle.80bb1523f48c6d611d4ba6c652892c20.js"><link rel="prefetch" as="script" href="Digging%20into%20Linux%20namespaces%20-%20part%201_files/a_data_002/config.js"></head>
+
+  <body>
+
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="https://blog.quarkslab.com/index.html">Quarkslab's blog </a>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li class="divider-vertical"></li>
+                  <li>
+                    <a href="https://blog.quarkslab.com/category/android.html">
+                      <i class="icon-folder-open icon-large"></i>Android
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://blog.quarkslab.com/category/android-reverseengineering.html">
+                      <i class="icon-folder-open icon-large"></i>Android, ReverseEngineering
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://blog.quarkslab.com/category/binary-analysis.html">
+                      <i class="icon-folder-open icon-large"></i>Binary Analysis
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://blog.quarkslab.com/category/blockchain.html">
+                      <i class="icon-folder-open icon-large"></i>Blockchain
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://blog.quarkslab.com/category/challenge.html">
+                      <i class="icon-folder-open icon-large"></i>Challenge
+                    </a>
+                  </li>
+                  <li class="active">
+                    <a href="https://blog.quarkslab.com/category/containers.html">
+                      <i class="icon-folder-open icon-large"></i>Containers
+                    </a>
+                  </li>
+                  <li>
+                    <a href="https://blog.quarkslab.com/category/cryptography.html">
+                      <i class="icon-folder-open icon-large"></i>Cryptography
+                    </a>
+                  </li>
+
+              <ul class="nav pull-right">
+                <li><a href="https://blog.quarkslab.com/archives.html"><i class="icon-th-list"></i>Archives</a></li>
+              </ul>
+
+            </ul>
+            <!--<p class="navbar-text pull-right">Logged in as <a href="#">username</a></p>-->
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid">
+      <div class="row">
+
+        <div class="span3 well sidebar-nav" id="sidebar">
+<style>
+  .quarkslab__block {
+      padding: 3px 22px; margin: 5px 0 5px;
+  }
+  .quarkslab__link {
+      font-weight: bold; color:rgb(43, 47, 102);
+      font-size: 16px
+  }
+  .quarkslab__link:hover{
+      color: rgb(43 47 102 / 74%);
+      text-decoration: none;
+  }
+</style>
+<div class="quarkslab__block">
+  <a class="quarkslab__link" href="https://quarkslab.com/" target="_blank">Quarkslab's website</a>
+</div><ul class="nav nav-list">
+<li class="nav-header"><h4><i class="icon-home icon-large"></i> social</h4></li>
+<li><a href="https://blog.quarkslab.com/feeds/all.rss.xml" rel="alternate"><i class="icon-bookmark icon-large"></i>atom feed</a></li>
+    <li><a href="https://twitter.com/quarkslab"><i class="icon-twitter-sign icon-large"></i>twitter</a></li>
+    <li><a href="https://github.com/quarkslab"><i class="icon-github-sign icon-large"></i>github</a></li>
+
+<li class="nav-header"><h4><i class="icon-folder-close icon-large"></i>Categories</h4></li>
+<li>
+<a href="https://blog.quarkslab.com/category/android.html">
+    <i class="icon-folder-open icon-large"></i>Android
+</a>
+</li>
+<li>
+<a href="https://blog.quarkslab.com/category/android-reverseengineering.html">
+    <i class="icon-folder-open icon-large"></i>Android, ReverseEngineering
+</a>
+</li>
+<li>
+<a href="https://blog.quarkslab.com/category/binary-analysis.html">
+    <i class="icon-folder-open icon-large"></i>Binary Analysis
+</a>
+</li>
+<li>
+<a href="https://blog.quarkslab.com/category/blockchain.html">
+    <i class="icon-folder-open icon-large"></i>Blockchain
+</a>
+</li>
+<li>
+<a href="https://blog.quarkslab.com/category/challenge.html">
+    <i class="icon-folder-open icon-large"></i>Challenge
+</a>
+</li>
+<li>
+<a href="https://blog.quarkslab.com/category/containers.html">
+    <i class="icon-folder-open icon-large"></i>Containers
+</a>
+</li>
+<li>
+<a href="https://blog.quarkslab.com/category/cryptography.html">
+    <i class="icon-folder-open icon-large"></i>Cryptography
+</a>
+</li>
+<li>
+<a href="https://blog.quarkslab.com/category/development.html">
+    <i class="icon-folder-open icon-large"></i>Development
+</a>
+</li>
+<li>
+<a href="https://blog.quarkslab.com/category/exploitation.html">
+    <i class="icon-folder-open icon-large"></i>Exploitation
+</a>
+</li>
+<li>
+<a href="https://blog.quarkslab.com/category/fuzzing.html">
+    <i class="icon-folder-open icon-large"></i>Fuzzing
+</a>
+</li>
+<li>
+<a href="https://blog.quarkslab.com/category/hardware.html">
+    <i class="icon-folder-open icon-large"></i>Hardware
+</a>
+</li>
+<li>
+<a href="https://blog.quarkslab.com/category/hardware-reverseengineering.html">
+    <i class="icon-folder-open icon-large"></i>Hardware, ReverseEngineering
+</a>
+</li>
+<li>
+<a href="https://blog.quarkslab.com/category/kernel-debugging.html">
+    <i class="icon-folder-open icon-large"></i>Kernel Debugging
+</a>
+</li>
+<li>
+<a href="https://blog.quarkslab.com/category/life-at-quarkslab.html">
+    <i class="icon-folder-open icon-large"></i>Life at Quarkslab
+</a>
+</li>
+<li>
+<a href="https://blog.quarkslab.com/category/maths.html">
+    <i class="icon-folder-open icon-large"></i>Maths
+</a>
+</li>
+<li>
+<a href="https://blog.quarkslab.com/category/obfuscation.html">
+    <i class="icon-folder-open icon-large"></i>Obfuscation
+</a>
+</li>
+<li>
+<a href="https://blog.quarkslab.com/category/pentest.html">
+    <i class="icon-folder-open icon-large"></i>PenTest
+</a>
+</li>
+<li>
+<a href="https://blog.quarkslab.com/category/program-analysis.html">
+    <i class="icon-folder-open icon-large"></i>Program Analysis
+</a>
+</li>
+<li>
+<a href="https://blog.quarkslab.com/category/programming.html">
+    <i class="icon-folder-open icon-large"></i>Programming
+</a>
+</li>
+<li>
+<a href="https://blog.quarkslab.com/category/reverseengineering.html">
+    <i class="icon-folder-open icon-large"></i>ReverseEngineering
+</a>
+</li>
+<li>
+<a href="https://blog.quarkslab.com/category/software.html">
+    <i class="icon-folder-open icon-large"></i>Software
+</a>
+</li>
+<li>
+<a href="https://blog.quarkslab.com/category/vulnerability.html">
+    <i class="icon-folder-open icon-large"></i>Vulnerability
+</a>
+</li>
+
+<li class="nav-header"><h4><i class="icon-tags icon-large"></i>Tags</h4></li>
+
+
+</ul>        </div><!--/.well -->
+
+        <div class="span9">
+<section id="content">
+<article>
+<header>
+<h1>
+  <a href="" rel="bookmark" title="Permalink to Digging into Linux namespaces - part 1">
+    Digging into Linux namespaces - part 1
+  </a>
+</h1>
+</header>
+<div class="entry-content">
+  <div class="well">
+<footer class="post-info">
+<span class="label">Date</span>
+<abbr class="published" title="2021-11-16T00:00:00+01:00">
+        <i class="icon-calendar"></i>Tue 16 November 2021
+</abbr>
+<span class="label">By</span>
+<a href="https://blog.quarkslab.com/author/mihail-kirov.html"><i class="icon-user"></i>Mihail Kirov</a>
+<span class="label">Category</span>
+<a href="https://blog.quarkslab.com/category/containers.html"><i class="icon-folder-open"></i>Containers</a>.
+
+
+<span class="label">Tags</span>
+	<a href="https://blog.quarkslab.com/tag/linux.html"><i class="icon-tag"></i>Linux</a>
+	<a href="https://blog.quarkslab.com/tag/container.html"><i class="icon-tag"></i>container</a>
+	<a href="https://blog.quarkslab.com/tag/kernel.html"><i class="icon-tag"></i>kernel</a>
+	<a href="https://blog.quarkslab.com/tag/docker.html"><i class="icon-tag"></i>Docker</a>
+</footer><!-- /.post-info -->  </div>
+
+  <div class="summary"><p class="first last">Process isolation is a key component for containers. One of the key underlying mechanisms are <em>namespaces</em>. We will explore what they are, and how they work, to build our own isolated container and better understand each piece.</p>
+</div>
+
+  <div class="section" id="what-are-namespaces">
+<h2>What are namespaces?</h2>
+<p>Namespaces are a Linux kernel feature released in kernel version 2.6.24
+in 2008. They provide processes with <strong>their own system view</strong>, thus
+<strong>isolating independent processes from each other</strong>. In other words,
+<strong>namespaces define the set of resources that a process can use</strong> (<em>You
+cannot interact with something that you cannot see</em>). At a high level,
+they allow fine-grain partitioning of global operating system resources
+such as mounting points, network stack and inter-process communication
+utilities. A powerful side of namespaces is that they limit access to
+system resources without the running process being aware of the
+limitations. In typical Linux fashion they are represented as files
+under the <tt class="docutils literal"><span class="pre">/proc/&lt;pid&gt;/ns</span></tt> directory.</p>
+<div class="highlight"><pre><span></span><span class="gp">cryptonite@cryptonite:~ $ </span><span class="nb">echo</span> <span class="nv">$$</span>
+<span class="go">4622</span>
+<span class="gp">cryptonite@cryptonite:~ $ </span>ls /proc/<span class="nv">$$</span>/ns -al
+<span class="go">total 0</span>
+<span class="go">dr-x--x--x 2 cryptonite cryptonite 0 Jun 29 15:00 .</span>
+<span class="go">dr-xr-xr-x 9 cryptonite cryptonite 0 Jun 29 13:13 ..</span>
+<span class="go">lrwxrwxrwx 1 cryptonite cryptonite 0 Jun 29 15:00 cgroup -&gt; 'cgroup:[4026531835]'</span>
+<span class="go">lrwxrwxrwx 1 cryptonite cryptonite 0 Jun 29 15:00 ipc -&gt; 'ipc:[4026531839]'</span>
+<span class="go">lrwxrwxrwx 1 cryptonite cryptonite 0 Jun 29 15:00 mnt -&gt; 'mnt:[4026531840]'</span>
+<span class="go">lrwxrwxrwx 1 cryptonite cryptonite 0 Jun 29 15:00 net -&gt; 'net:[4026532008]'</span>
+<span class="go">lrwxrwxrwx 1 cryptonite cryptonite 0 Jun 29 15:00 pid -&gt; 'pid:[4026531836]'</span>
+<span class="go">lrwxrwxrwx 1 cryptonite cryptonite 0 Jun 29 15:00 pid_for_children -&gt; 'pid:[4026531836]'</span>
+<span class="go">lrwxrwxrwx 1 cryptonite cryptonite 0 Jun 29 15:00 time -&gt; 'time:[4026531834]'</span>
+<span class="go">lrwxrwxrwx 1 cryptonite cryptonite 0 Jun 29 15:00 time_for_children -&gt; 'time:[4026531834]'</span>
+<span class="go">lrwxrwxrwx 1 cryptonite cryptonite 0 Jun 29 15:00 user -&gt; 'user:[4026531837]'</span>
+<span class="go">lrwxrwxrwx 1 cryptonite cryptonite 0 Jun 29 15:00 uts -&gt; 'uts:[4026531838]'</span>
+</pre></div>
+<p>When we spawn a new process all the namespaces are inherited from its
+parent.</p>
+<div class="highlight"><pre><span></span><span class="gp"># </span>inception
+<span class="gp">cryptonite@cryptonite:~ $ </span>/bin/zsh
+<span class="gp"># </span>father PID verification
+<span class="go">╭─cryptonite@cryptonite ~</span>
+<span class="go">╰─$ ps -efj  | grep $$</span>
+<span class="go">crypton+   13560    4622   13560    4622  1 15:07 pts/1    00:00:02 /bin/zsh</span>
+<span class="go">╭─cryptonite@cryptonite ~</span>
+<span class="go">╰─$ ls /proc/$$/ns -al</span>
+<span class="go">total 0</span>
+<span class="go">dr-x--x--x 2 cryptonite cryptonite 0 Jun 29 15:10 .</span>
+<span class="go">dr-xr-xr-x 9 cryptonite cryptonite 0 Jun 29 15:07 ..</span>
+<span class="go">lrwxrwxrwx 1 cryptonite cryptonite 0 Jun 29 15:10 cgroup -&gt; 'cgroup:[4026531835]'</span>
+<span class="go">lrwxrwxrwx 1 cryptonite cryptonite 0 Jun 29 15:10 ipc -&gt; 'ipc:[4026531839]'</span>
+<span class="go">lrwxrwxrwx 1 cryptonite cryptonite 0 Jun 29 15:10 mnt -&gt; 'mnt:[4026531840]'</span>
+<span class="go">lrwxrwxrwx 1 cryptonite cryptonite 0 Jun 29 15:10 net -&gt; 'net:[4026532008]'</span>
+<span class="go">lrwxrwxrwx 1 cryptonite cryptonite 0 Jun 29 15:10 pid -&gt; 'pid:[4026531836]'</span>
+<span class="go">lrwxrwxrwx 1 cryptonite cryptonite 0 Jun 29 15:10 pid_for_children -&gt; 'pid:[4026531836]'</span>
+<span class="go">lrwxrwxrwx 1 cryptonite cryptonite 0 Jun 29 15:10 time -&gt; 'time:[4026531834]'</span>
+<span class="go">lrwxrwxrwx 1 cryptonite cryptonite 0 Jun 29 15:10 time_for_children -&gt; 'time:[4026531834]'</span>
+<span class="go">lrwxrwxrwx 1 cryptonite cryptonite 0 Jun 29 15:10 user -&gt; 'user:[4026531837]'</span>
+<span class="go">lrwxrwxrwx 1 cryptonite cryptonite 0 Jun 29 15:10 uts -&gt; 'uts:[4026531838]'</span>
+</pre></div>
+<p>Namespaces are created with the <em>clone</em> syscall with one of the
+following arguments:</p>
+<ul class="simple">
+<li><tt class="docutils literal">CLONE_NEWNS</tt> - create new mount namespace;</li>
+<li><tt class="docutils literal">CLONE_NEWUTS</tt> - create new UTS namespace;</li>
+<li><tt class="docutils literal">CLONE_NEWIPC</tt> - create new IPC namespace;</li>
+<li><tt class="docutils literal">CLONE_NEWPID</tt> - create new PID namespace;</li>
+<li><tt class="docutils literal">CLONE_NEWNET</tt> - create new NET namespace;</li>
+<li><tt class="docutils literal">CLONE_NEWUSER</tt> - create new USR namespace;</li>
+<li><tt class="docutils literal">CLONE_NEWCGROUP</tt> - create a new cgroup namespace.</li>
+</ul>
+<p>Namespaces can also be created using the <em>unshare</em> syscall. The
+difference between <em>clone</em> and <em>unshare</em> is that <em>clone</em> spawns a new
+process inside a new set of namespaces, and <em>unshare</em> moves the current
+process inside a new set of namespaces (unshares the current ones).</p>
+</div>
+<div class="section" id="why-use-namespaces">
+<h2>Why use namespaces?</h2>
+<p>If we <strong>imagine namespaces as boxes for processes</strong> containing some
+abstracted global system resources, one good thing with these boxes is
+that you can <strong>add and remove stuff from one box and it will not affect
+the content of the other boxes</strong>. Or, if a process A in a box (set of
+namespaces) goes crazy and decides to delete the whole filesystem or the
+network stack in that box, it will not affect the abstraction of these
+resources provided for another process B placed in a different box.
+Moreover, namespaces can provide even fine-grained isolation, allowing
+process A and B to share some system resources (e.g. sharing a mount
+point or a network stack). Namespaces are often used when untrusted
+code has to be executed on a given machine without compromising the host
+OS. Programming contest platforms like <em>Hackerrank</em>, <em>Codeforces</em>,
+<em>Rootme</em> use namespaced environments in order to safely execute and
+verify contestants' code without putting their servers at risk. PaaS
+(platform as a service) providers like <em>Google Cloud Engine</em> use namespaced
+environments to run multiple user services (e.g. web servers, databases)
+on the same hardware without the possibility of interference of these
+services. So namespaces can also be seen as useful for <strong>efficient
+resource sharing</strong>. Other cloud technologies like Docker or LXC also use
+namespaces as means for process isolation. These technologies put
+operating system processes in isolated environments called
+<em>containers</em>. Running processes in Docker containers, for example, is
+like running them in virtual machines. The difference between containers
+and VMs is that containers share and use directly the host OS kernel,
+thus making them significantly lighter than virtual machines as there is
+no hardware emulation. This increase of overall performance is mainly
+due to the usage of namespaces which are directly integrated in the
+Linux kernel. However, there are some
+<a class="reference external" href="https://github.com/firecracker-microvm/firecracker">implementations</a>
+of VMs which are extremely light.</p>
+</div>
+<div class="section" id="types-of-namespaces">
+<h2>Types of namespaces</h2>
+<p>In the current stable Linux Kernel version 5.7 there are seven different
+namespaces:</p>
+<ul class="simple">
+<li><strong>PID namespace</strong>: isolation of the system process tree;</li>
+<li><strong>NET namespace</strong>: isolation of the host network stack;</li>
+<li><strong>MNT namespace</strong>: isolation of host filesystem mount points;</li>
+<li><strong>UTS namespace</strong>: isolation of hostname;</li>
+<li><strong>IPC namespace</strong>: isolation for interprocess communication utilities (shared segments, semaphores);</li>
+<li><strong>USER namespace</strong>: isolation of system users IDs;</li>
+<li><strong>CGROUP namespace</strong>: isolation of the virtual cgroup filesystem of the host.</li>
+</ul>
+<p>The namespaces are per-process attributes. <strong>Each process can perceive
+at most one namespace</strong>. In other words, at any given moment, any
+process P belongs to exactly one instance of each namespace. For example
+when a given process wants to update the route table on the system, the
+Kernel shows it the copy of the route table of the namespace to which it
+belongs at that moment. If a process asks for its ID in the system, the
+Kernel will respond with the ID of the process in its current namespace
+(in case of nested namespace). We are going to look in detail at each
+namespace in order to understand what are the operating system
+mechanisms behind them. Understanding that will help us find what is
+under the hood of today’s <em>containerized</em> technologies.</p>
+<div class="section" id="pid-namespace">
+<h3>PID namespace</h3>
+<p>Historically, the Linux kernel has maintained a single process tree. The
+tree data structure contains a reference to every process currently
+running in a parent-child hierarchy. It also enumerates all running
+processes in the OS. This structure is maintained in the so called
+<em>procfs</em> filesystem which is a property of the live system (i.e. it’s
+present only when the OS is running). This structure allows processes
+with sufficient privileges to attach to other processes, inspect,
+communicate and/or kill them. It also contains information about the
+root directory of a process, its current working directory, the open
+file descriptors, virtual memory addresses, the available mounting
+points, etc.</p>
+<div class="highlight"><pre><span></span><span class="gp"># </span>an example of the procfs structure
+<span class="gp">cryptonite@cryptonite:~ $</span>ls /proc/1/
+<span class="go">   arch_status     coredump_filter      gid_map     mounts          pagemap         setgroups   task</span>
+<span class="go">   attr            cpu_resctrl_groups   io          mountstats      patch_state     smaps       timens_offsets</span>
+<span class="go">   cgroup          environ              map_files   numa_maps       root            stat        uid_map</span>
+<span class="go">   clear_refs      exe                  maps        oom_adj         sched           statm</span>
+<span class="go">...</span>
+<span class="gp"># </span>an example of the process tree structure
+<span class="gp">cryptonite@cryptonite:~ $</span>pstree <span class="p">|</span> head -n <span class="m">20</span>
+<span class="go">systemd-+-ModemManager---2*[{ModemManager}]</span>
+<span class="go">        |-NetworkManager---2*[{NetworkManager}]</span>
+<span class="go">        |-accounts-daemon---2*[{accounts-daemon}]</span>
+<span class="go">        |-acpid</span>
+<span class="go">        |-avahi-daemon---avahi-daemon</span>
+<span class="go">        |-bluetoothd</span>
+<span class="go">        |-boltd---2*[{boltd}]</span>
+<span class="go">        |-colord---2*[{colord}]</span>
+<span class="go">        |-containerd---17*[{containerd}]</span>
+</pre></div>
+<p>On system boot, the first process started on most of the modern Linux OS
+is systemd (system daemon), which is situated on the root node of the
+tree. Its parent is <strong>PID=0 which is a non-existing process in the OS</strong>.
+This process is after that responsible for starting the other
+services/daemons, which are represented as its childs and are necessary
+for the normal functioning of the OS. These processes will have PIDs &gt; 1
+and the PIDs in the tree structure are unique.</p>
+<p>With the introduction of the <em>Process namespace (or PID namespace)</em> it
+became possible to make nested process trees. It allows processes other
+than systemd (PID=1) to perceive themselves as the root process by
+moving on the top of a subtree, thus obtaining PID=1 in that subtree.
+All processes in the same subtree will also obtain IDs relative to the
+process namespace. This also means that some processes may end up having
+multiple IDs depending on the number of process namespaces that they are
+in. Yet, in each namespace, at most one process can have a given PID (the
+unique value of a node in the process tree becomes a per-namespace
+property). This comes from the fact that relations between the processes
+in the root process namespace stay intact. Or said with other words, a
+process in a new PID namespace is still attached to its parent, thus
+being part of its parent PID namespace. These relations between all
+processes can be seen in the root process namespace, but in a nested
+process namespace they are not visible. That means that a process in a
+nested process namespace can’t interact with its parent or any other
+process in an upper process namespace. That’s due to the fact that, being
+on the top of a new PID namespace, the process perceives its PID as 1, and
+there is no other process before the process with PID=1.</p>
+<img alt="" class="align-center" src="Digging%20into%20Linux%20namespaces%20-%20part%201_files/jcPTsBS.png">
+<center><i>Diagram by <a href="https://www.toptal.com/linux/separation-anxiety-isolating-your-system-with-linux-namespaces">Mahmud Ridwan from Toptal</a></i></center><br><p>In the Linux kernel the PID is represented as a structure. Inside we can
+also find the namespaces a process is part of as an array of <em>upid
+struct</em>.</p>
+<div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">upid</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">nr</span><span class="p">;</span><span class="w">  </span><span class="cm">/* the pid value */</span><span class="w"></span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">pid_namespace</span><span class="w"> </span><span class="o">*</span><span class="n">ns</span><span class="p">;</span><span class="w">       </span><span class="cm">/* the namespace this value</span>
+<span class="cm">                                    * is visible in */</span><span class="w"></span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">hlist_node</span><span class="w"> </span><span class="n">pid_chain</span><span class="p">;</span><span class="w"> </span><span class="cm">/* hash chain for faster search of PIDS in the given namespace*/</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+
+<span class="k">struct</span><span class="w"> </span><span class="nc">pid</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">atomic_t</span><span class="w"> </span><span class="n">count</span><span class="p">;</span><span class="w"> </span><span class="cm">/* reference counter */</span><span class="w"></span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">hlist_head</span><span class="w"> </span><span class="n">tasks</span><span class="p">[</span><span class="n">PIDTYPE_MAX</span><span class="p">];</span><span class="w"> </span><span class="cm">/* lists of tasks */</span><span class="w"></span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">rcu_head</span><span class="w"> </span><span class="n">rcu</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">level</span><span class="p">;</span><span class="w">              </span><span class="c1">// number of upids</span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">upid</span><span class="w"> </span><span class="n">numbers</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span><span class="w">  </span><span class="c1">// array of pid namespaces</span>
+<span class="p">};</span><span class="w"></span>
+</pre></div>
+<p>To create a new process inside a new PID namespace, one must call the
+<em>clone()</em> system call with a special flag <strong>CLONE_NEWPID</strong>. Whereas the
+other namespaces discussed below can also be created using the
+<em>unshare()</em> system call, a PID namespace can only be created at the time
+a new process is spawned using <em>clone()</em> or <em>fork()</em> syscalls.</p>
+<p>Let’s explore that:</p>
+<div class="highlight"><pre><span></span><span class="gp"># </span>Let<span class="err">'</span>s start a process <span class="k">in</span> a new pid namespace<span class="p">;</span>
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo unshare --pid  /bin/bash
+<span class="go">bash: fork: Cannot allocate memory     [1]</span>
+<span class="gp">root@cryptonite:/home/cryptonite# </span>ls
+<span class="go">bash: fork: Cannot allocate memory     [1]</span>
+</pre></div>
+<p>What happened? It seems like the shell is stuck between the two
+namespaces. This is due to the fact that <tt class="docutils literal">unshare</tt> doesn’t enter the
+new namespace after being executed (<tt class="docutils literal">execve()</tt> call). This is the
+desired Linux kernel behavior. The current “unshare” process calls the
+<tt class="docutils literal">unshare</tt> system call, creating a new pid namespace, but the current
+“unshare” process is not in the new pid namespace. A process B creates a
+new namespace but the process B itself won’t be put into the new
+namespace, only the sub-processes of process B will be put into the new
+namespace. After the creation of the namespace the <tt class="docutils literal">unshare</tt> program
+will execute <tt class="docutils literal">/bin/bash</tt>. Then <tt class="docutils literal">/bin/bash</tt> will fork several new
+sub-processes to do some jobs. These sub-processes will have a PIDs
+relative to the new namespace and when these processes are done they
+will exit leaving the namespace without PID=1. The Linux kernel doesn’t
+like to have PID namespaces without a process with PID=1 inside. So when
+the namespace is left empty the kernel will disable some mechanisms
+which are related to the PID allocation inside this namespace thus
+leading to this error. This error is well documented if you
+<a class="reference external" href="https://stackoverflow.com/questions/44666700/unshare-pid-bin-bash-fork-cannot-allocate-memory">look</a>
+around the Internet.</p>
+<p>Instead, we must instruct the <tt class="docutils literal">unshare</tt> program to fork a new process
+after it has created the namespace. Then this new process will have
+PID=1 and will execute our shell program. In that way when the
+sub-processes of <tt class="docutils literal">/bin/bash</tt> exit the namespace will still have a
+process with PID=1.</p>
+<div class="highlight"><pre><span></span><span class="gp">cryptonite@cryptonite:~ $</span>sudo unshare --pid --fork  /bin/bash
+<span class="gp">root@cryptonite:/home/cryptonite# echo $</span>$
+<span class="go">1</span>
+<span class="gp">root@cryptonite:/home/cryptonite# </span>ps
+<span class="go">    PID TTY          TIME CMD</span>
+<span class="go">   7239 pts/0    00:00:00 sudo</span>
+<span class="go">   7240 pts/0    00:00:00 unshare</span>
+<span class="go">   7241 pts/0    00:00:00 bash</span>
+<span class="go">   7250 pts/0    00:00:00 ps</span>
+</pre></div>
+<p>But why doesn't our shell have PID 1 when we use <tt class="docutils literal">ps</tt>? And why do we
+still see the process from the root namespace ? The <tt class="docutils literal">ps</tt> program uses
+the <em>procfs</em> virtual file system to obtain information about the current
+processes in the system. This filesystem is mounted in the <em>/proc</em>
+directory. However, in the new namespace this mountpoint describes the
+processes from the root PID namespace. There are two ways to avoid that:</p>
+<div class="highlight"><pre><span></span><span class="gp"># </span>creating a new mount namespace and mounting a new procfs inside
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo unshare --pid --fork --mount /bin/bash
+<span class="gp">root@cryptonite:/home/cryptonite# </span>mount -t proc proc /proc
+<span class="gp">root@cryptonite:/home/cryptonite# </span>ps
+<span class="go">    PID TTY          TIME CMD</span>
+<span class="go">      1 pts/2    00:00:00 bash</span>
+<span class="go">      9 pts/2    00:00:00 ps</span>
+
+<span class="gp"># </span>Or use the unshare wrapper with the --mount-proc flag
+<span class="gp"># </span>which does the same
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo unshare --fork --pid --mount-proc  /bin/bash
+<span class="gp">root@cryptonite:/home/cryptonite# </span>ps
+<span class="go">    PID TTY          TIME CMD</span>
+<span class="go">      1 pts/1    00:00:00 bash</span>
+<span class="go">      8 pts/1    00:00:00 ps</span>
+</pre></div>
+<p>As we mentioned before, a process can have multiple IDs depending on the
+number of namespaces the process is in. Let’s now inspect the different
+PIDs of a shell that is nested in two namespaces.</p>
+<div class="highlight"><pre><span></span><span class="go">╭cryptonite@cryptonite:~ $sudo unshare --fork --pid --mount-proc  /bin/bash</span>
+<span class="gp"># </span>this process has PID <span class="m">4700</span> <span class="k">in</span> the root PID namespace
+<span class="gp">root@cryptonite:/home/cryptonite# </span>unshare --fork --pid --mount-proc /bin/bash
+<span class="gp">root@cryptonite:/home/cryptonite# </span>ps
+<span class="go">    PID TTY          TIME CMD</span>
+<span class="go">      1 pts/1    00:00:00 bash</span>
+<span class="go">      8 pts/1    00:00:00 ps</span>
+
+<span class="gp"># </span>Let<span class="err">'</span>s inspect the different PIDs
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo nsenter --target <span class="m">4700</span> --pid --mount
+<span class="go">cryptonite# ps -aux</span>
+<span class="go">USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND</span>
+<span class="go">root           1  0.0  0.0  18476  4000 pts/0    S    21:11   0:00 /bin/bash</span>
+<span class="go">root           9  0.2  0.0  21152  5644 pts/1    S    21:15   0:00 -zsh # me</span>
+<span class="go">root          14  0.0  0.0  20972  4636 pts/0    S    21:15   0:00 sudo unshare</span>
+<span class="go">root          15  0.0  0.0  16720   520 pts/0    S    21:15   0:00 unshare -fp -</span>
+<span class="go">root          11  0.0  0.0  18476  3836 pts/0    S+   21:15   0:00 /bin/bash # nested shell</span>
+<span class="go">root          24  0.0  0.0  20324  3520 pts/1    R+   21:15   0:00 ps -aux</span>
+<span class="gp"># </span>the PID viewed from within the first PID namespace is <span class="m">11</span>
+
+<span class="gp"># </span>Let<span class="err">'</span>s see its PID <span class="k">in</span> the root PID namespace
+<span class="gp">cryptonite@cryptonite:~ $</span>ps aux <span class="p">|</span> grep /bin/bash
+<span class="go">....</span>
+<span class="go">root       13512  0.0  0.0  18476  4036 pts/1    S+   14:44   0:00 /bin/bash</span>
+<span class="gp"># </span>believe me it<span class="err">'</span>s that process <span class="p">;</span><span class="o">)</span>
+
+<span class="gp"># </span>All this info can be found <span class="k">in</span> the procfs
+<span class="gp">cryptonite@cryptonite:~ $</span>cat /proc/13152/status <span class="p">|</span> grep -i NSpid
+<span class="go">NSpid:  13512   11  1</span>
+<span class="gp"># </span>PID <span class="k">in</span> the root <span class="nv">namespace</span> <span class="o">=</span> <span class="m">13512</span>
+<span class="gp"># </span>PID <span class="k">in</span> the first nested <span class="nv">namespace</span> <span class="o">=</span> <span class="m">11</span>
+<span class="gp"># </span>pid <span class="k">in</span> the second nested <span class="nv">namespace</span> <span class="o">=</span> <span class="m">1</span>
+</pre></div>
+<p>Okay, after we saw the virtualization in terms of identifiers let’s see
+if there is real isolation in terms of interaction with other processes
+in the OS.</p>
+<div class="highlight"><pre><span></span><span class="gp"># </span>process is run with effective <span class="nv">UID</span><span class="o">=</span><span class="m">0</span> <span class="o">(</span>root<span class="o">)</span> and it can normally <span class="nb">kill</span> any other process <span class="k">in</span> the OS
+<span class="gp">root@cryptonite:/home/cryptonite# </span><span class="nb">kill</span> <span class="m">3</span>
+<span class="gp"># </span>nothing happens, because there is no process <span class="m">3</span> <span class="k">in</span> the current namespace
+</pre></div>
+<p>We can see that the process could not interact with a process outside of
+its current namespace (You cannot touch something you cannot see,
+remember?).</p>
+<p><strong>To sum up about the process namespace</strong>:</p>
+<ul class="simple">
+<li>Processes within a namespace only see (interact with) the processes in the same PID namespace (isolation);</li>
+<li>Each PID namespace has its own numbering starting at 1 (relative);</li>
+<li>This numbering is unique per process namespace - If PID 1 goes away then the whole namespace is deleted;</li>
+<li>Namespaces can be nested;</li>
+<li>A process ends up having multiple PIDs (when namespaces are nested);</li>
+<li>All ‘ps’-like commands use the virtual <tt class="docutils literal">procfs</tt> file system mount to deliver their functionalities.</li>
+</ul>
+</div>
+<div class="section" id="net-namespace">
+<h3>NET namespace</h3>
+<p>A network namespace limits the view of a process of the host network. It
+allows a process to have its own separation from the host network stack
+(set of network interfaces, routing rules, set of netfilter hooks).
+Let’s inspect that:</p>
+<div class="highlight"><pre><span></span><span class="gp"># </span>root net namespace
+<span class="gp">cryptonite@cryptonite:~ $</span>ip link  <span class="c1"># network interfaces</span>
+<span class="go">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000</span>
+<span class="go">    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00</span>
+<span class="go">2: enp0s31f6: &lt;NO-CARRIER,BROADCAST,MULTICAST,UP&gt; mtu 1500 qdisc fq_codel state DOWN mode DEFAULT group default qlen 1000</span>
+<span class="go">    link/ether 8c:16:45:54:8b:65 brd ff:ff:ff:ff:ff:ff</span>
+<span class="go">.....</span>
+<span class="gp">cryptonite@cryptonite:~ $</span>ip route <span class="c1"># routing rules</span>
+<span class="go">default via 192.168.2.1 dev wlp3s0 proto dhcp metric 600</span>
+<span class="go">10.0.0.0/16 via 10.0.1.230 dev tun0 proto static metric 50</span>
+<span class="go">....</span>
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo iptables --list-rules <span class="c1"># firewall rules</span>
+<span class="go">-P INPUT ACCEPT</span>
+<span class="go">-P FORWARD DROP</span>
+<span class="go">-P OUTPUT ACCEPT</span>
+<span class="go">-N DOCKER</span>
+<span class="go">.....</span>
+</pre></div>
+<p>Let’s now create a fresh new network namespace and inspect the network
+stack.</p>
+<div class="highlight"><pre><span></span><span class="gp">cryptonite@cryptonite:~ $</span>sudo unshare --net /bin/bash
+<span class="gp">root@cryptonite:/home/cryptonite# </span>ip link
+<span class="go">1: lo: &lt;LOOPBACK&gt; mtu 65536 qdisc noop state DOWN mode DEFAULT group default qlen 1000</span>
+<span class="go">    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00</span>
+<span class="gp">root@cryptonite:/home/cryptonite# </span>ip route
+<span class="go">Error: ipv4: FIB table does not exist.</span>
+<span class="go">Dump terminated</span>
+<span class="gp">root@cryptonite:/home/cryptonite# </span>iptables --list-rules
+<span class="go">-P INPUT ACCEPT</span>
+<span class="go">-P FORWARD ACCEPT</span>
+<span class="go">-P OUTPUT ACCEPT</span>
+</pre></div>
+<p>We can see that the entire network stack of the process has changed.
+There is only the loopback interface which is also down. Said with other
+words, this process is unreachable via the network. But that’s a problem,
+isn’t it? Why do we need a virtually isolated network stack if we can’t
+communicate through it? Here is an illustration of the situation:</p>
+<img alt="" class="align-center" src="Digging%20into%20Linux%20namespaces%20-%20part%201_files/r5PvRzu.png">
+<p>As normally we want to be able to communicate in some way with a given
+process, we have to provide a way to connect different net namespaces.</p>
+<div class="section" id="connecting-a-pair-of-namespaces">
+<h4>Connecting a pair of namespaces</h4>
+<p>In order to make a process inside a new network namespace reachable from
+another network namespace, a pair of virtual interfaces is needed. These
+two virtual interfaces come with a virtual cable - what comes at one of
+the ends goes to the other (like a Linux pipe). So if we want to connect
+a namespace (let’s say N1) and another one (let’s say N2) we have to put
+one of the virtual interfaces in the network stack of N1 and the other
+in the network stack of N2.</p>
+<img alt="" class="align-center" src="Digging%20into%20Linux%20namespaces%20-%20part%201_files/2Bu1BeZ.png">
+<center><i>Diagram by <a href="https://www.toptal.com/linux/separation-anxiety-isolating-your-system-with-linux-namespaces">Mahmud Ridwan from Toptal</a></i></center><br><p>Let’s build a functional network between the different network
+namespaces! It’s important to note that there are two types of network
+namespaces - named and anonymous. The details are not going to be
+discussed in this article. First we’re going to create a network
+namespace and then create a pair of virtual interfaces:</p>
+<div class="highlight"><pre><span></span><span class="gp"># </span>create network namespace
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo ip netns add netnstest
+<span class="gp"># </span>check <span class="k">if</span> creation was successful
+<span class="gp">cryptonite@cryptonite:~ $</span>ls /var/run/netns
+<span class="go">netnstest</span>
+<span class="gp"># </span>check <span class="k">if</span> we have the same configurations as before
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo nsenter --net<span class="o">=</span>/var/run/netns/netnstest /bin/bash
+<span class="gp">root@cryptonite:/home/cryptonite# </span>ip link
+<span class="go">1: lo: &lt;LOOPBACK&gt; mtu 65536 qdisc noop state DOWN mode DEFAULT group default qlen 1000</span>
+<span class="go">    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00</span>
+<span class="gp"># </span>create the virtual network interface pair on
+<span class="gp"># </span>the top of the network stack of the root namespace
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo ip link add veth0 <span class="nb">type</span> veth peer name ceth0
+<span class="gp"># </span>check <span class="k">if</span> the pair veth0-ceth0 was successfully created
+<span class="gp">cryptonite@cryptonite:~ $</span>ip link <span class="p">|</span> tail -n <span class="m">4</span>
+<span class="go">8: ceth0@veth0: &lt;BROADCAST,MULTICAST,M-DOWN&gt; mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000</span>
+<span class="go">    link/ether f6:1a:ee:9c:26:0c brd ff:ff:ff:ff:ff:ff</span>
+<span class="go">9: veth0@ceth0: &lt;BROADCAST,MULTICAST,M-DOWN&gt; mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000</span>
+<span class="go">    link/ether ae:4d:95:44:ab:39 brd ff:ff:ff:ff:ff:ff</span>
+<span class="gp"># </span>put one of the interfaces <span class="k">in</span> the previously created network namespace
+<span class="gp"># </span>and keep the other end <span class="k">in</span> the root network namespace
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo ip link <span class="nb">set</span> ceth0 netns netnstest
+<span class="gp">cryptonite@cryptonite:~ $</span>ip link
+<span class="go">...</span>
+<span class="go">9: veth0@if8: &lt;BROADCAST,MULTICAST&gt; mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000</span>
+<span class="go">    link/ether ae:4d:95:44:ab:39 brd ff:ff:ff:ff:ff:ff link-netns netnstest</span>
+<span class="gp"># </span>one of the interfaces vanished
+<span class="gp"># </span>turn on the interface and assign it an IP
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo ip link <span class="nb">set</span> veth0 up
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo ip addr add <span class="m">172</span>.12.0.11/24 dev veth0
+
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo nsenter --net<span class="o">=</span>/var/run/netns/netnstest /bin/bash
+<span class="gp">root@cryptonite:/home/cryptonite# </span>ip link
+<span class="go">1: lo: &lt;LOOPBACK&gt; mtu 65536 qdisc noop state DOWN mode DEFAULT group default qlen 1000</span>
+<span class="go">    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00</span>
+<span class="go">8: ceth0@if9: &lt;BROADCAST,MULTICAST&gt; mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000</span>
+<span class="go">    link/ether f6:1a:ee:9c:26:0c brd ff:ff:ff:ff:ff:ff link-netnsid 0</span>
+<span class="gp">root@cryptonite:/home/cryptonite# </span>ip link <span class="nb">set</span> lo up
+<span class="gp">root@cryptonite:/home/cryptonite# </span>ip link <span class="nb">set</span> ceth0 up
+<span class="gp">root@cryptonite:/home/cryptonite# </span>ip addr add <span class="m">172</span>.12.0.12/24 dev ceth0
+<span class="gp">root@cryptonite:/home/cryptonite# </span>ip addr <span class="p">|</span> grep ceth
+<span class="go">8: ceth0@if9: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue state UP group default qlen 1000</span>
+<span class="go">    inet 172.12.0.12/24 scope global ceth0</span>
+</pre></div>
+<p>Now we have to test the connectivity of the virtual interfaces.</p>
+<div class="highlight"><pre><span></span><span class="gp"># </span>inside the root namespace
+<span class="gp">cryptonite@cryptonite:~ $</span>ping <span class="m">172</span>.12.0.12
+<span class="go">PING 172.12.0.12 (172.12.0.12) 56(84) bytes of data.</span>
+<span class="go">64 bytes from 172.12.0.12: icmp_seq=1 ttl=64 time=0.125 ms</span>
+<span class="go">64 bytes from 172.12.0.12: icmp_seq=2 ttl=64 time=0.111 ms</span>
+<span class="go">...</span>
+<span class="gp"># </span>inside of the new net namespace
+<span class="gp">root@cryptonite:/home/cryptonite# </span>tcpdump
+<span class="go">17:18:17.534459 IP 172.12.0.11 &gt; 172.12.0.12: ICMP echo request, id 2, seq 1, length 64</span>
+<span class="go">17:18:17.534479 IP 172.12.0.12 &gt; 172.12.0.11: ICMP echo reply, id 2, seq 1, length 64</span>
+<span class="go">17:18:18.540407 IP 172.12.0.11 &gt; 172.12.0.12: ICMP echo request, id 2, seq 2, length 64</span>
+<span class="go">....</span>
+
+<span class="gp"># </span>try the other way around
+<span class="gp">root@cryptonite:/home/cryptonite# </span>ping <span class="m">172</span>.12.0.11
+<span class="go">PING 172.12.0.11 (172.12.0.11) 56(84) bytes of data.</span>
+<span class="go">64 bytes from 172.12.0.11: icmp_seq=1 ttl=64 time=0.108 ms</span>
+<span class="go">...</span>
+<span class="gp"># </span>back to the root namespace
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo tcpdump -i veth0
+<span class="go">tcpdump: verbose output suppressed, use -v or -vv for full protocol decode</span>
+<span class="go">listening on veth0, link-type EN10MB (Ethernet), capture size 262144 bytes</span>
+<span class="go">17:22:27.999342 IP 172-12-0-12.lightspeed.sgnwmi.sbcglobal.net &gt; 172-12-0-11.lightspeed.sgnwmi.sbcglobal.net: ICMP echo request, id 18572, seq 1, length 64</span>
+<span class="go">17:22:27.999417 IP 172-12-0-11.lightspeed.sgnwmi.sbcglobal.net &gt; 172-12-0-12.lightspeed.sgnwmi.sbcglobal.net: ICMP echo reply, id 18572, seq 1, length 64</span>
+<span class="go">17:22:29.004480 IP 172-12-0-12.lightspeed.sgnwmi.sbcglobal.net &gt; 172-12-0-11.lightspeed.sgnwmi.sbcglobal.net: ICMP echo request, id 18572, seq 2, length 64</span>
+</pre></div>
+<p>From the snippet above we can see how to create a new network
+namespace and connect it to the root namespace using a pipe-like
+connection. The parent namespace retained one of the interfaces, and
+passed the other one to the child namespace. Anything that enters one of
+the ends, comes out through the other end, just as a real network
+connection.</p>
+<img alt="" class="align-center" src="Digging%20into%20Linux%20namespaces%20-%20part%201_files/CvhHvwA.png">
+<p>We saw how to isolate, virtualize, and connect Linux network stacks.
+Having the power of virtualization normally we would like to go further
+and create a virtual LAN between processes!</p>
+</div>
+<div class="section" id="connecting-multiple-namespaces-creating-a-lan">
+<h4>Connecting multiple namespaces (creating a LAN)</h4>
+<p>To create a virtual LAN another Linux virtualization utility will be
+used - the bridge. The Linux bridge behaves like a real level 2
+(Ethernet) network switch - it forwards packets between interfaces that
+are connected to it using a MAC association table. Let’s create our
+virtual LAN.</p>
+<div class="highlight"><pre><span></span><span class="gp"># </span>all previous configurations were deleted
+<span class="gp"># </span>creating a pair of namespaces
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo ip netns add netns_0
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo ip netns add netns_1
+<span class="gp">cryptonite@cryptonite:~ $</span>tree /var/run/netns/
+<span class="go">/var/run/netns/</span>
+<span class="go">├── netns_0</span>
+<span class="go">└── netns_1</span>
+<span class="go">...</span>
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo ip link add veth0 <span class="nb">type</span> veth peer name ceth0
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo ip link add veth1 <span class="nb">type</span> veth peer name ceth1
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo ip link <span class="nb">set</span> veth1 up
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo ip link <span class="nb">set</span> veth0 up
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo ip link <span class="nb">set</span> ceth0 netns netns_0
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo ip link <span class="nb">set</span> ceth1 netns netns_1
+<span class="gp"># </span>setup the first connected interface -&gt; <span class="nv">net_namespace</span><span class="o">=</span>netns_0
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo ip netns <span class="nb">exec</span> netns_0 ip link <span class="nb">set</span> lo up
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo ip netns <span class="nb">exec</span> netns_0 ip link <span class="nb">set</span> ceth0 up
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo ip netns <span class="nb">exec</span> netns_0 ip addr add <span class="m">192</span>.168.1.20/24 dev ceth0
+
+<span class="gp"># </span>setup the second connected interface -&gt; netns_1
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo ip netns <span class="nb">exec</span> netns_1 ip link <span class="nb">set</span> lo up
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo ip netns <span class="nb">exec</span> netns_1 ip link <span class="nb">set</span> ceth1 up
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo ip netns <span class="nb">exec</span> netns_1 ip addr add <span class="m">192</span>.168.1.21/24 dev ceth1
+
+<span class="gp"># </span>create the bridge
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo ip link add name br0 <span class="nb">type</span> bridge
+<span class="gp"># </span><span class="nb">set</span> an ip on the bridge and turn it up
+<span class="gp"># </span>so that processes can reach the LAN through it
+<span class="gp">cryptonite@cryptonite:~ $</span>ip addr add <span class="m">192</span>.168.1.11/24 brd + dev br0
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo ip link <span class="nb">set</span> br0 up
+<span class="gp"># </span>connect the ends of the network namespaces <span class="k">in</span> the
+<span class="gp"># </span>root namespace to the bridge
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo ip link <span class="nb">set</span> veth0 master br0
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo ip link <span class="nb">set</span> veth1 master br0
+<span class="gp"># </span>check <span class="k">if</span> the bridge is the master of the two veths
+<span class="gp">cryptonite@cryptonite:~ $</span>bridge link show br0
+<span class="go">10: veth0@if9: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 master br0 state forwarding priority 32 cost 2</span>
+<span class="go">12: veth1@if11: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 master br0 state forwarding priority 32 cost 2</span>
+
+<span class="gp"># </span>allow forwarding by the bridge <span class="k">in</span> the root net namespace
+<span class="gp"># </span><span class="k">in</span> order to <span class="nb">enable</span> the interface to forward between the namespaces
+<span class="gp"># </span>depending on the different iptables policy this step may be skipped
+<span class="gp">cryptonite@cryptonite:~ $</span>iptables -A FORWARD -i br0 -j ACCEPT
+
+<span class="gp"># </span>check the network connection netns_test1 -&gt; netns_test0
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo ip netns <span class="nb">exec</span> netns_test1 ping  <span class="m">192</span>.168.1.20
+<span class="go">PING 192.168.1.20 (192.168.1.20) 56(84) bytes of data.</span>
+<span class="go">64 bytes from 192.168.1.20: icmp_seq=1 ttl=64 time=0.046 ms</span>
+<span class="go">...</span>
+
+<span class="gp"># </span>connectivity check root_namespace -&gt; netns_0
+<span class="gp">cryptonite@cryptonite:~ $</span>ip route
+<span class="go">...</span>
+<span class="go">192.168.1.0/24 dev br0 proto kernel scope link src 192.168.1.11</span>
+<span class="go">...</span>
+<span class="gp">cryptonite@cryptonite:~ $</span>ping <span class="m">192</span>.168.1.20
+<span class="go">PING 192.168.1.20 (192.168.1.20) 56(84) bytes of data.</span>
+<span class="go">64 bytes from 192.168.1.20: icmp_seq=1 ttl=64 time=0.150 ms</span>
+<span class="go">...</span>
+
+<span class="gp"># </span>check the network connection netns_test0 -&gt; netns_test1
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo ip netns <span class="nb">exec</span> netns_test0 ping <span class="m">192</span>.168.1.21
+<span class="go">PING 192.168.1.21 (192.168.1.21) 56(84) bytes of data.</span>
+<span class="go">64 bytes from 192.168.1.21: icmp_seq=1 ttl=64 time=0.040 ms</span>
+<span class="go">...</span>
+</pre></div>
+<p>It works! A really important thing is that the virtual interface has to
+have permissions to forward packets on the current network stack. To
+avoid messing up with the iptables rules, one can repeat this procedure
+in a separated network namespace where the rules table will be empty by
+default. Let’s now connect the LAN to the Internet!</p>
+</div>
+<div class="section" id="reaching-the-outside-world">
+<h4>Reaching the outside world</h4>
+<p>We have assigned IP to our bridge and we can ping it from the network
+namespaces.</p>
+<div class="highlight"><pre><span></span><span class="gp"># </span>try to reach the internet
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo ip netns <span class="nb">exec</span> netns_1 ping <span class="m">8</span>.8.8.8
+<span class="go">ping: connect: Network is unreachable</span>
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo ip netns <span class="nb">exec</span> netns_1 ip route
+<span class="go">192.168.1.0/24 dev veth1 proto kernel scope link src 192.168.1.21</span>
+
+<span class="gp"># </span>no route <span class="k">for</span> the host interface -&gt; bridge is on Level <span class="nv">2</span> <span class="o">=</span>&gt;
+<span class="gp"># </span>no ARP resolution and inter-networking
+<span class="gp"># </span>We  can make the bridge the default gateway <span class="k">for</span> both namespaces
+<span class="gp"># </span>and <span class="nb">let</span> it forward all traffic to the upper network namespace
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo ip -all netns <span class="nb">exec</span> ip route add default via <span class="m">192</span>.168.1.11
+
+<span class="gp"># </span>Did everything go smoothly?
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo ip -all netns <span class="nb">exec</span> ip route
+<span class="go">netns: netns_1</span>
+<span class="go">default via 192.168.1.11 dev ceth1</span>
+<span class="go">192.168.1.0/24 dev ceth1 proto kernel scope link src 192.168.1.21</span>
+
+<span class="go">netns: netns_0</span>
+<span class="go">default via 192.168.1.11 dev ceth0</span>
+<span class="go">192.168.1.0/24 dev ceth0 proto kernel scope link src 192.168.1.20</span>
+
+<span class="gp"># </span>let<span class="err">'</span>s try again
+<span class="gp">cryptonite@cryptonite:~ $</span>ip netns <span class="nb">exec</span> netns_0 ping <span class="m">8</span>.8.8.8
+<span class="go">PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.</span>
+<span class="go">^C</span>
+<span class="go">--- 8.8.8.8 ping statistics ---</span>
+<span class="go">2 packets transmitted, 0 received, 100% packet loss, ...</span>
+
+<span class="gp"># </span>One last thing -&gt; the outside world doesn<span class="err">'</span>t know about our LAN nor <span class="k">do</span> the host so we have to add one last rule
+<span class="gp">cryptonite@cryptonite:~ $</span>iptables -t nat -A POSTROUTING -s <span class="m">192</span>.168.1.0/24 -j MASQUERADE
+
+<span class="gp">cryptonite@cryptonite:~ $</span>sudo ip netns <span class="nb">exec</span> netns_0 ping <span class="m">8</span>.8.8.8
+<span class="go">PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.</span>
+<span class="go">64 bytes from 8.8.8.8: icmp_seq=1 ttl=61 time=11.5 ms</span>
+<span class="go">64 bytes from 8.8.8.8: icmp_seq=2 ttl=61 time=12.5 ms</span>
+<span class="go">...</span>
+</pre></div>
+<p>Note that the <tt class="docutils literal">iptables</tt> rules of the host have to be well configured,
+because a bad configuration can lead to bad things. In addition, without
+masquerading, the packets would leave the host with its internal IP address
+which is only known from this host, the gateway on the host’s LAN has no
+idea how to join the local bridge network.</p>
+<p><strong>To sum up about the network namespace</strong>:</p>
+<ul class="simple">
+<li>Processes within a given network namespace get their own private 
+network stack, including network interfaces, routing tables, iptables 
+rules, sockets (ss, netstat);</li>
+<li>The connection between network namespaces can be done using two virtual interfaces;</li>
+<li>Communication between isolated network stacks in the same namespace is done using a bridge;</li>
+<li>The NET namespace can be used to simulate a “box” of Linux processes
+ where only a few of them would be able to reach the outside world (by 
+removing the host’s default gateway from the routing rules of some NET 
+namespaces).</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="take-a-breath">
+<h2>Take a breath</h2>
+<p>So far, we have covered several namespaces. In the next article, we will see others:</p>
+<ul class="simple">
+<li>USER: to map UID/GID and hence have different root users depending on the current namespace.</li>
+<li>MNT: to create per process filesystems.</li>
+<li>UTS: to isolate the system hostname.</li>
+<li>IPC: which provides isolation for semaphores, message queues, shared memory, etc.</li>
+<li>CGROUP: by which you can control hardware resources per process.</li>
+</ul>
+<p>Then, you'll know (almost) everything about namespaces thus will be 
+able to create your own container, or rather a fully isolated 
+environment for a given process.</p>
+</div>
+<div class="section" id="greetings">
+<h2>Greetings</h2>
+<p>I would like to thank some key members of the team for discussions
+(erynian, mahé, Lo and pappy), proofreading (Francisco), and last but
+not least, pappy for pushing me beyond my comfort zone and helping me to
+grow.</p>
+</div>
+<div class="section" id="references">
+<h2>References</h2>
+<ul class="simple">
+<li><a class="reference external" href="https://www.toptal.com/linux/separation-anxiety-isolating-your-system-with-linux-namespaces">https://www.toptal.com/linux/separation-anxiety-isolating-your-system-with-linux-namespaces</a></li>
+<li><a class="reference external" href="https://lwn.net/Articles/259217/">https://lwn.net/Articles/259217/</a></li>
+<li><a class="reference external" href="https://www.redhat.com/sysadmin/pid-namespace">https://www.redhat.com/sysadmin/pid-namespace</a></li>
+<li><a class="reference external" href="https://byteplumbing.net/2018/01/inspecting-docker-container-network-traffic/">https://byteplumbing.net/2018/01/inspecting-docker-container-network-traffic/</a></li>
+<li><a class="reference external" href="https://opensource.com/article/19/10/namespaces-and-containers-linux">https://opensource.com/article/19/10/namespaces-and-containers-linux</a></li>
+<li><a class="reference external" href="https://iximiuz.com/en/posts/container-networking-is-simple/">https://iximiuz.com/en/posts/container-networking-is-simple/</a></li>
+<li><a class="reference external" href="https://ops.tips/blog/using-network-namespaces-and-bridge-to-isolate-servers/">https://ops.tips/blog/using-network-namespaces-and-bridge-to-isolate-servers/</a></li>
+<li><a class="reference external" href="https://www.cloudsavvyit.com/742/what-are-linux-namespaces-and-what-are-they-used-for/">https://www.cloudsavvyit.com/742/what-are-linux-namespaces-and-what-are-they-used-for/</a></li>
+<li><a class="reference external" href="https://lwn.net/Articles/532593/">https://lwn.net/Articles/532593/</a></li>
+<li><a class="reference external" href="https://lwn.net/Articles/689856/">https://lwn.net/Articles/689856/</a></li>
+<li><a class="reference external" href="https://www.redhat.com/sysadmin/7-linux-namespaces">https://www.redhat.com/sysadmin/7-linux-namespaces</a></li>
+<li><a class="reference external" href="https://www.redhat.com/sysadmin/mount-namespaces">https://www.redhat.com/sysadmin/mount-namespaces</a></li>
+<li><a class="reference external" href="http://ifeanyi.co/posts/linux-namespaces-part-3/">http://ifeanyi.co/posts/linux-namespaces-part-3/</a></li>
+</ul>
+</div>
+
+</div><!-- /.entry-content -->
+<div class="comments">
+  <h2>Comments</h2>
+  <div id="disqus_thread"><iframe id="dsq-app3540" name="dsq-app3540" allowtransparency="true" scrolling="no" tabindex="0" title="Disqus" style="width: 1px !important; min-width: 100% !important; border: medium none !important; overflow: hidden !important; height: 1177px !important;" src="Digging%20into%20Linux%20namespaces%20-%20part%201_files/a_002.html" horizontalscrolling="no" verticalscrolling="no" width="100%" frameborder="0"></iframe></div>
+  <script type="text/javascript">
+    var disqus_identifier = "digging-into-linux-namespaces-part-1.html";
+    (function() {
+     var dsq = document.createElement('script');
+     dsq.type = 'text/javascript'; dsq.async = true;
+     dsq.src = 'https://Quarkslab.disqus.com/embed.js';
+     (document.getElementsByTagName('head')[0] ||
+      document.getElementsByTagName('body')[0]).appendChild(dsq);
+     })();
+</script>
+                </div>
+                </article>
+                </section>
+        </div><!--/span-->
+
+      </div><!--/row-->
+
+      <hr>
+
+      <footer>
+      <address id="about">
+        Powered by <a href="http://docs.getpelican.com/">Pelican <i class="icon-external-link"></i></a>, Theme is from <a href="http://twitter.github.com/bootstrap/">Bootstrap from Twitter <i class="icon-external-link"></i></a>
+      </address><!-- /#about -->
+      </footer>
+
+    </div><!--/.fluid-container-->
+
+
+<script type="text/javascript">
+    var disqus_shortname = 'Quarkslab';
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = 'https://' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
+
+    <!-- Le javascript -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="Digging%20into%20Linux%20namespaces%20-%20part%201_files/jquery-1.7.2.min.js"></script>
+    <script src="Digging%20into%20Linux%20namespaces%20-%20part%201_files/bootstrap.min.js"></script>
+  
+<iframe style="display: none;"></iframe></body></html>

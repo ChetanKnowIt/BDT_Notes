@@ -1,0 +1,6 @@
+for my list 
+y = [6,3,2,9,11,0,5,6,7,32]
+I want to convert this list to
+y = [6,3,2,5,7,0,9,6,11,32]
+how do I do this in C? 
+
