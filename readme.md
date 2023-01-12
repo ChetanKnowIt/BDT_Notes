@@ -5,10 +5,14 @@ This repository for all big data related content I will be studying.
 
 ## Table of Contents:
 
+- [BDA](#bda)
 - [Day 2](#day-2)
 - [Day 3](#day-3)
 
 <!-- toc -->
+
+## BDA
+- contains all pdfs
 
 ## Day 2
 
