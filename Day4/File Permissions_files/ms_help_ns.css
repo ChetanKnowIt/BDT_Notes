@@ -1,0 +1,131 @@
+BODY { 
+      background-color:#ffffff;  }
+P { 
+   font-size:10.0pt; 
+   color:#000000; 
+   font-family:Arial, sans-serif;  }
+LI.kadov-P { 
+            font-size:10.0pt; 
+            color:#000000; 
+            font-family:Arial, sans-serif;  }
+H1 { 
+    font-family:Arial, sans-serif; 
+    font-size:16pt; 
+    color:#990000; 
+    font-style:normal; 
+    font-weight:bold;  }
+LI.kadov-H1 { 
+             font-family:Arial, sans-serif; 
+             font-size:16pt; 
+             color:#990000; 
+             font-style:normal; 
+             font-weight:normal;  }
+H2 { 
+    font-weight:bold; 
+    font-family:Arial, sans-serif; 
+    font-size:12pt; 
+    color:#990000;  }
+LI.kadov-H2 { 
+             font-weight:bold; 
+             font-family:Arial, sans-serif; 
+             font-size:12pt; 
+             color:#990000;  }
+H3 { 
+    font-family:Arial, sans-serif; 
+    font-size:12pt; 
+    font-weight:bold; 
+    font-style:normal; 
+    text-transform:capitalize; 
+    background-color:Transparent; 
+    color:#400000;  }
+LI.kadov-H3 { 
+             font-family:Arial, sans-serif; 
+             font-size:12pt; 
+             font-weight:bold; 
+             font-style:normal; 
+             text-transform:capitalize; 
+             color:#400000;  }
+H4 { 
+    font-weight:bold; 
+    font-size:10.0pt; 
+    color:#000000; 
+    font-family:Arial, sans-serif;  }
+LI.kadov-H4 { 
+             font-weight:normal; 
+             font-size:10.0pt; 
+             color:#000000; 
+             font-family:Arial, sans-serif;  }
+H5 { 
+    font-weight:bold; 
+    font-size:10.0pt; 
+    color:#000000; 
+    font-family:Arial, sans-serif;  }
+LI.kadov-H5 { 
+             font-weight:normal; 
+             font-size:10.0pt; 
+             color:#000000; 
+             font-family:Arial, sans-serif;  }
+H6 { 
+    font-family:Verdana; 
+    font-weight:bold; 
+    font-size:10.0pt; 
+    color:#000000;  }
+LI.kadov-H6 { 
+             font-family:Verdana; 
+             font-weight:normal; 
+             font-size:10.0pt; 
+             color:#000000;  }
+A:link { 
+        color:#0000ff; 
+        font-weight:bold; 
+        font-style:normal; 
+        font-family:Arial, sans-serif; 
+        text-decoration:none;  }
+A:visited { 
+           color:#0000ff; 
+           font-weight:bold; 
+           font-style:normal; 
+           font-family:Arial, sans-serif; 
+           text-decoration:none;  }
+A.expandspot { 
+              color:#008000; 
+              font-style:italic; 
+              text-decoration:none none none;  }
+SPAN.expandtext { 
+                 font-style:italic; 
+                 font-weight:normal; 
+                 color:#ff0000;  }
+A.dropspot { 
+            color:#008000; 
+            font-style:italic; 
+            text-decoration:none none none;  }
+A.glossterm { 
+             color:#800000; 
+             font-style:italic; 
+             text-decoration:none none none;  }
+SPAN.glosstext { 
+                font-style:italic; 
+                font-weight:normal; 
+                color:#0000ff;  }
+OL { 
+    margin-top:0px; 
+    margin-bottom:0px;  }
+UL { 
+    margin-top:0px; 
+    margin-bottom:0px;  }
+A:hover { 
+         font-family:Arial, sans-serif; 
+         font-weight:bold; 
+         font-style:normal; 
+         text-decoration:underline;  }
+SPAN.Action { 
+             font-weight:bold; 
+             font-style:italic; 
+             color:#800000;  }
+A:active { 
+          font-weight:Bold; 
+          font-family:Arial, sans-serif; 
+          color:#000095; 
+          text-decoration:none;  }
+P.body {  }
+LI.kadov-P-Cbody {  }
