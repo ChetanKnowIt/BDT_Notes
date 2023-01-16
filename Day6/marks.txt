@@ -1,0 +1,10 @@
+snehal,78,TY
+shreya,69,FY
+akash,58,SY
+vinay,69,SY
+omkar,51,TY
+anuja,48,TY
+prince,63,SY
+chetan,83,FY
+vidhi,60,TY
+sonali,58,SY
