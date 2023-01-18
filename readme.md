@@ -60,3 +60,9 @@ This repository for all big data related content I will be studying.
  - MapReduce for internet usage in _usage_
  - MapReduce for facebook likes on video for Feb, 2018 in _insight_
  - [click here](https://github.com/ChetanKnowIt/BDT_Notes/tree/main/Day7)
+
+
+## Day 8
+ - MapReduce for facebook average shares in 2017
+ - Map-Only Task
+ - 
