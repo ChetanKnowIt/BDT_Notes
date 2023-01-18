@@ -49,9 +49,14 @@ This repository for all big data related content I will be studying.
  - mapper and reducer with python
  - MapReduce java example for wordcount
  - check [Notes](https://github.com/ChetanKnowIt/BDT_Notes/blob/main/Day5/Notes.md)
-
+ - [click here](https://github.com/ChetanKnowIt/BDT_Notes/tree/main/Day6)
 
 ## Day 6
  - more exercises 
  - MapReduce for Ages
  - MapReduce for Marks
+
+## Day 7
+ - MapReduce for internet usage in _usage_
+ - MapReduce for facebook likes on video for Feb, 2018 in _insight_
+ - [click here](https://github.com/ChetanKnowIt/BDT_Notes/tree/main/Day7)
