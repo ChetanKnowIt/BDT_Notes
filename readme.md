@@ -65,4 +65,4 @@ This repository for all big data related content I will be studying.
 ## Day 8
  - MapReduce for facebook average shares in 2017
  - Map-Only Task
- - 
+ - [click here for Notes](https://github.com/ChetanKnowIt/BDT_Notes/blob/main/Day8/Notes.md)
