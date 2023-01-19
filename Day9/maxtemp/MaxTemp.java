@@ -39,13 +39,13 @@ public class MaxTemp {
 		// Reduce Function
 		public void reduce(Text key,Iterable<FloatWritable> values, Context context)
 		throws IOException, InterruptedException{
-			float max = -100;
+			float std = 0.0f;
 			for (FloatWritable temp: values){
-				if(temp.get() > max)
-					max = temp.get();
+				if(temp.get() > std)
+					std = temp.get();
 			}
-			if(max > globalTemp){
-				globalTemp = max;
+			if(std > globalTemp){
+				globalTemp = std;
 				year = key.toString();
 			}
 		}
