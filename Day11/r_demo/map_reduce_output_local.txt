@@ -1,0 +1,5 @@
+Apple	4	
+Grapes	1	
+Mango	2	
+Orange	2	
+Plum	3	

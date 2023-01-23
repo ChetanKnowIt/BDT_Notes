@@ -75,11 +75,22 @@ This repository for all big data related content I will be studying.
 ## Day 10
  
  * links
+ 
   - https://data-flair.training/blogs/hadoop-streaming/
   - https://www.glennklockwood.com/data-intensive/hadoop/streaming.html
   - https://cran.r-project.org/bin/linux/ubuntu/fullREADME.html
   - https://www.mongodb.com/blog/post/hadoop-streaming-support-for-mongodb
   - https://www.how2shout.com/linux/how-to-connect-to-aws-ec2-instance-from-ubuntu/
+  
  * Notes
+
   - Hadoop Streaming
   - installing R on linux: sudo apt install r-base-core
+  
+
+## Day 11
+
+  * MR streaming code for python check [here](https://github.com/ChetanKnowIt/BDT_Notes/blob/main/Day10/readme.md)
+  * With Rscript in r_demo
+  * Wordcount in R
+  * Multi Node Setup
