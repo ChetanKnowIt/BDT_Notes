@@ -42,13 +42,13 @@ This repository for all big data related content I will be studying.
  - hadoop commands
  - mapreduce introduction
  - sdlc
- - check [Notes](https://github.com/ChetanKnowIt/BDT_Notes/blob/main/Day4/Notes.md)
+ - check [Notes](https://github.com/ChetanKnowIt/BDT_Notes/blob/main/Day4/readme.md)
 
 
 ## Day 5
  - mapper and reducer with python
  - MapReduce java example for wordcount
- - check [Notes](https://github.com/ChetanKnowIt/BDT_Notes/blob/main/Day5/Notes.md)
+ - check [Notes](https://github.com/ChetanKnowIt/BDT_Notes/blob/main/Day5/readme.md)
 
 ## Day 6
  - more exercises 
@@ -65,4 +65,21 @@ This repository for all big data related content I will be studying.
 ## Day 8
  - MapReduce for facebook average shares in 2017
  - Map-Only Task
- - [click here for Notes](https://github.com/ChetanKnowIt/BDT_Notes/blob/main/Day8/Notes.md)
+ - [click here for Notes](https://github.com/ChetanKnowIt/BDT_Notes/blob/main/Day8/readme.md)
+
+
+## Day 9
+ - 
+
+
+## Day 10
+ 
+ * links
+  - https://data-flair.training/blogs/hadoop-streaming/
+  - https://www.glennklockwood.com/data-intensive/hadoop/streaming.html
+  - https://cran.r-project.org/bin/linux/ubuntu/fullREADME.html
+  - https://www.mongodb.com/blog/post/hadoop-streaming-support-for-mongodb
+  - https://www.how2shout.com/linux/how-to-connect-to-aws-ec2-instance-from-ubuntu/
+ * Notes
+  - Hadoop Streaming
+  - installing R on linux: sudo apt install r-base-core
