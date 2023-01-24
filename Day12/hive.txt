@@ -1,0 +1,4 @@
+SET hive.exec.dynamic.partition = true;
+SET hive.exec.dynamic.partition.mode = nonstrict;
+SET hive.exec.max.dynamic.partitions = 10000;
+SET hive.exec.max.dynamic.partitions.pernode = 1000;
