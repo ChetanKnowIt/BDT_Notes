@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Pyodide + CSS + Carousel Example</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+    <script src="https://pyodide-cdn2.iodide.io/v0.15.0/full/pyodide.js"></script>
+    <script>
+      languagePluginLoader.then(() => {
+        console.log("Pyodide is ready!");
+        // Your Pyodide code here
+        window.pyodide.runPython(`
+            import markdown
+            import requests
+        `);
+        fetch('https://raw.githubusercontent.com/ChetanKnowIt/BDT_Notes/main/readme.md')
+          .then(response => response.text())
+          .then(text => {
+            const md = window.pyodide.runPython(`
+                return markdown.markdown('''${text}''')
+            `);
+            $('.carousel').slick({
+              dots: true,
+              infinite: true,
+              speed: 300,
+              slidesToShow: 1,
+              adaptiveHeight: true
+            });
+            $('.carousel').html(md.content);
+          });
+      });
+    </script>
+    <style>
+      /* Your efficient CSS here */
+      .carousel {
+        width: 80%;
+        margin: 0 auto;
+        padding: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="carousel"></div>
+  </body>
+</html>
