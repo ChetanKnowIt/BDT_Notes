@@ -1,6 +1,8 @@
 import tkinter as tk
+from tkinter import ttk
 import requests
 from bs4 import BeautifulSoup
+import sv_ttk
 
 def download_and_install():
     selected_package = package_listbox.get(package_listbox.curselection())
@@ -43,6 +45,7 @@ for i in names_with_slash:
 for package in packages:
     package_listbox.insert(tk.END, package)
 
-tk.Button(root, text="Download and Install", command=download_and_install).pack()
+ttk.Button(root, text="Download and Install", style='Accent.TButton',command=download_and_install).pack()
 
+sv_ttk.set_theme("light")
 root.mainloop()
