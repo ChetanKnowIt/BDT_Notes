@@ -31,6 +31,7 @@
 		- su -l kafka
 		- sudo cp /home/ubuntu/kafka_2.13-2.8.2.tgz /home/kafka/
 		- mkdir kafka
+		- cd kafka
 		- tar -xvzf ~/kafka.tgz --strip 1
 		- nano ~/kafka/config/server.properties
 			+ delete.topic.enable = true
