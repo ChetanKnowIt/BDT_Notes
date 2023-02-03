@@ -29,7 +29,7 @@
 		- sudo adduser kafka
 		- sudo adduser kafka sudo
 		- su -l kafka
-		- curl "https://downloads.apache.org/kafka/2.8.2/kafka_2.12-2.8.2.tgz" -o ~/kafka.tgz
+		- sudo cp /home/ubuntu/kafka_2.13-2.8.2.tgz /home/kafka/
 		- mkdir kafka
 		- tar -xvzf ~/kafka.tgz --strip 1
 		- nano ~/kafka/config/server.properties
@@ -67,7 +67,12 @@
 			```
 		- sudo systemctl start kafka
 		- sudo systemctl status kafka
-
+	10. Test kafka installation
+		* We will need producer and consumer
+			```
+			~/kafka/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic MyKafkaTopic 
+			```
+		* 
 
 # Links:
 1. https://www.learndatasci.com/glossary/binary-classification/
