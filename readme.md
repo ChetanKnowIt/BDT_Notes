@@ -2,7 +2,6 @@
 
 This repository for all big data related content I will be studying. 
 
-
 ## Table of Contents:
 
 - [BDA](#bda)
@@ -11,11 +10,24 @@ This repository for all big data related content I will be studying.
 - [Day 4](#day-4)
 - [Day 5](#day-5)
 - [Day 6](#day-6)
+- [Day 7](#day-7)
+- [Day 8](#day-8)
+- [Day 9](#day-9)
+- [Day 10](#day-10)
+- [Day 11](#day-11)
+- [Day 12](#day-12)
+- [Day 13](#day-13)
+- [Day 14](#day-14)
+- [Day 15](#day-15)
+- [Day 16](#day-16)
+- [Day 17](#day-17)
+- [Day 18](#day-18)
+- [Day 19](#day-19)
 
 <!-- toc -->
 
 ## BDA
-- contains all pdfs
+- contains all pdfs -> [click here](https://github.com/ChetanKnowIt/BDT_Notes/tree/main/Student_Data/BDA)
 
 
 ## Day 2
@@ -69,23 +81,21 @@ This repository for all big data related content I will be studying.
 
 
 ## Day 9
- - 
+ - mintemp, maxtemp, forest, funniest post
+ - all codes no notes -> [here](https://github.com/ChetanKnowIt/BDT_Notes/tree/main/Day9)
 
 
 ## Day 10
  
- * links
- 
+  - Hadoop Streaming
+  - installing R on linux: sudo apt install r-base-core
+  - Notes -> [here](https://github.com/ChetanKnowIt/BDT_Notes/tree/main/Day10)
   - https://data-flair.training/blogs/hadoop-streaming/
   - https://www.glennklockwood.com/data-intensive/hadoop/streaming.html
   - https://cran.r-project.org/bin/linux/ubuntu/fullREADME.html
   - https://www.mongodb.com/blog/post/hadoop-streaming-support-for-mongodb
   - https://www.how2shout.com/linux/how-to-connect-to-aws-ec2-instance-from-ubuntu/
-  
- * Notes
-
-  - Hadoop Streaming
-  - installing R on linux: sudo apt install r-base-core
+ 
   
 
 ## Day 11
@@ -94,3 +104,48 @@ This repository for all big data related content I will be studying.
   * With Rscript in r_demo
   * Wordcount in R
   * Multi Node Setup
+
+## Day 12
+
+ * Big data ecosystem
+ * Hive
+ * Notes  -> [here](https://github.com/ChetanKnowIt/BDT_Notes/blob/main/Day12/readme.md)
+
+## Day 13
+
+ * hive commands and operations
+ * python with hive
+ * Notes -> [here](https://github.com/ChetanKnowIt/BDT_Notes/blob/main/Day13/readme.md)
+
+## Day 14
+
+ * python with hive 
+ * built in functions of hive
+ * join, subquery 
+ * Notes -> [here](https://github.com/ChetanKnowIt/BDT_Notes/blob/main/Day14/readme.md)
+
+## Day 15 
+
+ * NoSQL 
+ * HBase introduction
+ * Notes -> [here](https://github.com/ChetanKnowIt/BDT_Notes/blob/main/Day15/readme.md)
+
+## Day 16
+ * Hbase setup
+ * Hbase commands
+ * Notes -> [here](https://github.com/ChetanKnowIt/BDT_Notes/blob/main/Day16/readme.md)
+
+## Day 17
+* Spark introduction
+* spark-shell practical
+* Difference between RDD vs Dataframe vs Dataset
+* Notes -> [here](https://github.com/ChetanKnowIt/BDT_Notes/blob/main/Day17/readme.md)
+
+## Day 18
+* pyspark colab
+* Discussion on Data Analytics
+* Notes -> [here](https://github.com/ChetanKnowIt/BDT_Notes/blob/main/Day17/readme.md)
+
+## Day 19
+* pyspark colab 
+* ML, DL from [pypark-colab](https://github.com/ChetanKnowIt/pyspark-colab)
