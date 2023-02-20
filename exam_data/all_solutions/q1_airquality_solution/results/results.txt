@@ -1,0 +1,3 @@
+Average Wind Speed: 9.964057
+Day when Highest Temperature in 6th Month: 11 with Temperature: 93
+Count of Total Missing in Ozone and Solar: 43
